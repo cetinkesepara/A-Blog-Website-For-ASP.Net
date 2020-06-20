@@ -1,0 +1,669 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="@ViewData["Description"]">
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/reset.css" rel="stylesheet">
+    <link href="~/css/indexe.css" rel="stylesheet">
+    <link href="~/css/texteditor.css" rel="stylesheet" />
+
+    <link href="~/lib/ckeditor/plugins/codesnippet/lib/highlight/styles/vs2015.css" rel="stylesheet" />
+    <script src="~/lib/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js"></script>
+
+</head>
+<body>
+    <div class="body-after">
+        <div class="navbar-b">
+            <div class="navbar">
+                <ul class="objectMenu">
+                    @{
+                        var mainPage = "";
+                        if (ViewBag.CategoryActive == null && ViewBag.CategorySubActive == null)
+                        {
+                            mainPage = "active";
+                        }
+                    }
+                    <li class="objectItem @mainPage"><a asp-controller="Home" asp-action="Index" class="objectLink">ANASAYFA</a></li>
+                    @foreach (var item in ViewBag.Categories)
+                    {
+                        if (item.ParentId == 0)
+                        {
+                            var active = "";
+
+                            if (ViewBag.CategoryActive == item.CategoryId)
+                            {
+                                active = "active";
+                            }
+
+                            <li class="objectItem @active">
+                                <a asp-controller="Home" asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId" class="objectLink">@item.Name</a>
+                                <div class="objectDropdown">
+                                    <ul class="dropdownMenu">
+                                        @foreach (var subitem in ViewBag.Categories)
+                                        {
+                                            if (subitem.ParentId == item.CategoryId)
+                                            {
+                                                var activeSub = "";
+                                                if (ViewBag.CategorySubActive == subitem.CategoryId)
+                                                {
+                                                    activeSub = "activeDropdown";
+                                                }
+                                                <li class="dropdownItem @activeSub">
+                                                    <a asp-controller="Home" asp-action="GetBlogsByCategory" asp-route-id="@subitem.CategoryId" class="dropdownLink">@subitem.Name</a>
+                                                </li>
+                                            }
+                                        }
+
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                    }
+
+                </ul>
+            </div>
+            <div class="mobileMenuToggle">
+                <a>
+                    <svg width="24" height="24" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                         viewBox="0 0 469.334 469.334" xml:space="preserve">
+                    <g>
+                    <g>
+                    <path d="M15.834,176.542C58.104,201.677,162,263.355,213.875,293.094c6.354,3.646,13.563,5.573,20.792,5.573
+		                        s14.438-1.927,20.813-5.583c51.854-29.729,155.75-91.406,198.021-116.552c9.917-5.917,15.833-16.083,15.833-27.198
+		                        c0-11.115-5.917-21.281-15.833-27.208c-32.667-19.427-143.438-85.25-198.042-116.552C249.037,1.886,241.911-0.03,234.663,0
+		                        c-7.025,0.029-14.166,1.888-20.892,5.635c0,0-148.5,87.219-197.917,116.479C5.917,128.011,0,138.177,0,149.334
+		                        C0,160.448,5.917,170.615,15.834,176.542z" />
+
+
+
+                    <path d="M453.875,207.75c-3.354-2.073-7.604-2.115-11-0.073c-57.438,34.094-134.708,79.802-176.792,103.917
+		                        c-19.208,11-43.646,10.99-62.813,0.01C160.792,287.25,83.667,241.646,26.459,207.677c-3.375-2.031-7.646-2-11.021,0.073
+		                        C5.771,213.677,0,223.74,0,234.667c0,11.115,5.917,21.281,15.833,27.208C58.104,287.011,162,348.688,213.875,378.427
+		                        c6.354,3.646,13.563,5.573,20.792,5.573s14.438-1.927,20.813-5.583c51.854-29.729,155.75-91.406,198.021-116.552
+		                        c9.917-5.917,15.833-16.083,15.833-27.198C469.334,223.74,463.563,213.677,453.875,207.75z" />
+
+
+
+                    <path d="M453.875,293.084c-3.354-2.052-7.604-2.115-11-0.073c-57.438,34.094-134.708,79.802-176.792,103.917
+		                        c-19.208,11-43.646,10.99-62.813,0.01C160.792,372.584,83.667,326.98,26.459,293.011c-3.375-2.031-7.646-1.979-11.021,0.073
+		                        C5.771,299.011,0,309.073,0,320c0,11.115,5.917,21.281,15.833,27.208C58.104,372.344,162,434.021,213.875,463.761
+		                        c6.354,3.646,13.563,5.573,20.792,5.573s14.438-1.927,20.813-5.583c51.854-29.729,155.75-91.406,198.021-116.552
+		                        c9.917-5.917,15.833-16.083,15.833-27.198C469.334,309.073,463.563,299.011,453.875,293.084z" />
+
+
+
+                        </g>
+                        </g>
+                        </svg>
+                </a>
+            </div>
+            <div class="mobileMenu">
+                <div class="accordion" id="accordionExample">
+                    @{
+                        var mainPageMobile = "";
+                        if (ViewBag.CategoryActive == null && ViewBag.CategorySubActive == null)
+                        {
+                            mainPageMobile = "activeMainPage";
+                        }
+                    }
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-block mobileMain @mainPageMobile">ANASAYFA</a>
+                        </div>
+                    </div>
+
+
+
+                    @foreach (var item in ViewBag.Categories)
+                    {
+                        if (item.ParentId == 0)
+                        {
+                            var active = "";
+
+                            if (ViewBag.CategoryActive == item.CategoryId)
+                            {
+                                active = "active";
+                            }
+
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse@(item.CategoryId)" aria-expanded="true" aria-controls="collapse@(item.CategoryId)">
+                                            @item.Name
+                                        </button>
+                                    </h2>
+                                </div>
+
+                                <div id="collapse@(item.CategoryId)" class="collapse" aria-labelledby="heading@(item.CategoryId)" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        <ul>
+                                            <li class="mbSubItem @active">
+                                                <a asp-controller="Home" asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">TÜM İÇERİK</a>
+                                            </li>
+                                            @foreach (var subitem in ViewBag.Categories)
+                                            {
+                                                if (subitem.ParentId == item.CategoryId)
+                                                {
+                                                    var activeSub = "";
+                                                    if (ViewBag.CategorySubActive == subitem.CategoryId)
+                                                    {
+                                                        activeSub = "active";
+                                                    }
+                                                    <li class="mbSubItem @activeSub">
+                                                        <a asp-controller="Home" asp-action="GetBlogsByCategory" asp-route-id="@subitem.CategoryId">@subitem.Name</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <div class="mainSideToggle">
+            <svg height="24" width="24" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 512 512" xml:space="preserve">
+            <g>
+            <path d="M479.18,91.897H32.821C14.69,91.897,0,77.207,0,59.077s14.69-32.821,32.821-32.821H479.18
+		                c18.13,0,32.82,14.69,32.82,32.821S497.31,91.897,479.18,91.897z" />
+
+
+
+
+
+
+
+            <path d="M295.385,288.821H32.821C14.69,288.821,0,274.13,0,256s14.69-32.821,32.821-32.821h262.564
+		                c18.13,0,32.821,14.69,32.821,32.821S313.515,288.821,295.385,288.821z" />
+
+
+
+
+
+
+
+                </g>
+            <path d="M479.18,288.821h-52.513c-18.13,0-32.821-14.69-32.821-32.821s14.69-32.821,32.821-32.821h52.513
+	                c18.13,0,32.82,14.69,32.82,32.821S497.31,288.821,479.18,288.821z" />
+
+
+
+
+
+
+
+            <path d="M479.18,485.744H32.821C14.69,485.744,0,471.053,0,452.923c0-18.13,14.69-32.821,32.821-32.821
+	                H479.18c18.13,0,32.82,14.69,32.82,32.821C512,471.053,497.31,485.744,479.18,485.744z" />
+
+
+
+
+
+
+
+            </svg>
+        </div>
+
+        <div class="mainFooterToggle">
+            <svg height="24" width="24" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 341.333 341.333" xml:space="preserve">
+            <g>
+            <g>
+            <g>
+            <rect x="128" y="128" width="85.333" height="85.333" />
+
+            <rect x="0" y="0" width="85.333" height="85.333" />
+
+            <rect x="128" y="256" width="85.333" height="85.333" />
+
+            <rect x="0" y="128" width="85.333" height="85.333" />
+
+            <rect x="0" y="256" width="85.333" height="85.333" />
+
+            <rect x="256" y="0" width="85.333" height="85.333" />
+
+            <rect x="128" y="0" width="85.333" height="85.333" />
+
+            <rect x="256" y="128" width="85.333" height="85.333" />
+
+            <rect x="256" y="256" width="85.333" height="85.333" />
+
+		                </g>
+	                </g>
+                </g>
+            </svg>
+        </div>
+
+        <div id="side-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="side-items">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="sideList">
+                                        <div class="head">
+                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="mostRead-tab" data-toggle="tab" href="#mostRead" role="tab" aria-controls="mostRead" aria-selected="true">En Çok Okunan</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="mostComment-tab" data-toggle="tab" href="#mostComment" role="tab" aria-controls="mostComment" aria-selected="false">En Çok Yorum Alan</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="tab-content" id="myTabContent">
+                                            <div class="tab-pane fade show active" id="mostRead" role="tabpanel" aria-labelledby="mostRead-tab">
+                                                @foreach (var item in ViewBag.MostReadBlogs)
+                                                {
+                                                    <div class="hits">
+                                                        <span>
+                                                            <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                                            <img src="~/assets/category.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.VisitorHit
+                                                            <img src="~/assets/eye.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.CommentCount
+                                                            <img src="~/assets/comment.png" width="16" height="16" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                                        <div class="text">
+                                                            @{
+                                                                var date = item.PublishedDate;
+                                                            }
+                                                            <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                                            @{
+                                                                string blogName = item.Title;
+                                                                if (blogName.Length > 70)
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="tab-pane fade" id="mostComment" role="tabpanel" aria-labelledby="mostComment-tab">
+                                                @foreach (var item in ViewBag.MostCommentBlogs)
+                                                {
+                                                    <div class="hits">
+                                                        <span>
+                                                            <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                                            <img src="~/assets/category.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.VisitorHit
+                                                            <img src="~/assets/eye.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.CommentCount
+                                                            <img src="~/assets/comment.png" width="16" height="16" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                                        <div class="text">
+                                                            @{
+                                                                var date = item.PublishedDate;
+                                                            }
+                                                            <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                                            @{
+                                                                string blogName = item.Title;
+                                                                if (blogName.Length > 70)
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mt-5 mt-lg-0">
+                                    <div class="sideList">
+                                        <div class="head">
+                                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="lastPublished-tab" data-toggle="tab" href="#lastPublished" role="tab" aria-controls="lastPublished" aria-selected="true">En Son Yayınlanan</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="randomBlogs-tab" data-toggle="tab" href="#randomBlogs" role="tab" aria-controls="randomBlogs" aria-selected="false">Editörün Önerisi</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="tab-content" id="myTabContent">
+                                            <div class="tab-pane fade show active" id="lastPublished" role="tabpanel" aria-labelledby="lastPublished-tab">
+                                                @foreach (var item in ViewBag.LastPublishedBlogs)
+                                                {
+                                                    <div class="hits">
+                                                        <span>
+                                                            <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                                            <img src="~/assets/category.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.VisitorHit
+                                                            <img src="~/assets/eye.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.CommentCount
+                                                            <img src="~/assets/comment.png" width="16" height="16" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                                        <div class="text">
+                                                            @{
+                                                                var date = item.PublishedDate;
+                                                            }
+                                                            <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                                            @{
+                                                                string blogName = item.Title;
+                                                                if (blogName.Length > 70)
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="tab-pane fade" id="randomBlogs" role="tabpanel" aria-labelledby="randomBlogs-tab">
+                                                @foreach (var item in ViewBag.RandomBlogs)
+                                                {
+                                                    <div class="hits">
+                                                        <span>
+                                                            <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                                            <img src="~/assets/category.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.VisitorHit
+                                                            <img src="~/assets/eye.png" width="16" height="16" />
+                                                        </span>
+                                                        <span>
+                                                            @item.CommentCount
+                                                            <img src="~/assets/comment.png" width="16" height="16" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                                        <div class="text">
+                                                            @{
+                                                                var date = item.PublishedDate;
+                                                            }
+                                                            <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                                            @{
+                                                                string blogName = item.Title;
+                                                                if (blogName.Length > 70)
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mt-5 mt-lg-0">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="footer-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="footer-items">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="ft-blog">
+                                        <div class="head"><h3>Blog</h3></div>
+                                        <div class="content">
+                                            <ul>
+                                                <li>
+                                                    <a asp-controller="Home" asp-action="About">Hakkında</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-controller="Home" asp-action="Contact">İletişim</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-controller="Home" asp-action="FrequentlyAsked">Sıkça Sorulan Sorular</a>
+                                                </li>
+                                                <li>
+                                                    <a asp-controller="Home" asp-action="PrivacyPolicy">Gizlilik Politikası</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="ft-socialMedia">
+                                        <div class="head"><h3>Sosyal Medya</h3></div>
+                                        <div class="content">
+                                            <ul>
+                                                <li>
+                                                    <a href="@ViewBag.Settings.Facebook" target="_blank">
+                                                        <svg width="32" height="32" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve"> <g><g><path d="M448,0H64C28.704,0,0,28.704,0,64v384c0,35.296,28.704,64,64,64h192V336h-64v-80h64v-64c0-53.024,42.976-96,96-96h64v80h-32c-17.664,0-32-1.664-32,16v64h80l-32,80h-48v176h96c35.296,0,64-28.704,64-64V64C512,28.704,483.296,0,448,0z" /></g></g></svg>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@ViewBag.Settings.Twitter" target="_blank">
+                                                        <svg width="32" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m475.074219 0h-438.148438c-20.394531 0-36.925781 16.53125-36.925781 36.925781v438.148438c0 20.394531 16.53125 36.925781 36.925781 36.925781h438.148438c20.394531 0 36.925781-16.53125 36.925781-36.925781v-438.148438c0-20.394531-16.53125-36.925781-36.925781-36.925781zm-102.1875 199.601562c.113281 2.519532.167969 5.050782.167969 7.59375 0 77.644532-59.101563 167.179688-167.183594 167.183594h.003906-.003906c-33.183594 0-64.0625-9.726562-90.066406-26.394531 4.597656.542969 9.277343.8125 14.015624.8125 27.53125 0 52.867188-9.390625 72.980469-25.152344-25.722656-.476562-47.410156-17.464843-54.894531-40.8125 3.582031.6875 7.265625 1.0625 11.042969 1.0625 5.363281 0 10.558593-.722656 15.496093-2.070312-26.886718-5.382813-47.140624-29.144531-47.140624-57.597657 0-.265624 0-.503906.007812-.75 7.917969 4.402344 16.972656 7.050782 26.613281 7.347657-15.777343-10.527344-26.148437-28.523438-26.148437-48.910157 0-10.765624 2.910156-20.851562 7.957031-29.535156 28.976563 35.554688 72.28125 58.9375 121.117187 61.394532-1.007812-4.304688-1.527343-8.789063-1.527343-13.398438 0-32.4375 26.316406-58.753906 58.765625-58.753906 16.902344 0 32.167968 7.144531 42.890625 18.566406 13.386719-2.640625 25.957031-7.53125 37.3125-14.261719-4.394531 13.714844-13.707031 25.222657-25.839844 32.5 11.886719-1.421875 23.214844-4.574219 33.742187-9.253906-7.863281 11.785156-17.835937 22.136719-29.308593 30.429687zm0 0" /></svg>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@ViewBag.Settings.Instagram" target="_blank">
+                                                        <svg width="32" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m370.59375 169.304688c-2.355469-6.382813-6.113281-12.160157-10.996094-16.902344-4.742187-4.882813-10.515625-8.640625-16.902344-10.996094-5.179687-2.011719-12.960937-4.40625-27.292968-5.058594-15.503906-.707031-20.152344-.859375-59.402344-.859375-39.253906 0-43.902344.148438-59.402344.855469-14.332031.65625-22.117187 3.050781-27.292968 5.0625-6.386719 2.355469-12.164063 6.113281-16.902344 10.996094-4.882813 4.742187-8.640625 10.515625-11 16.902344-2.011719 5.179687-4.40625 12.964843-5.058594 27.296874-.707031 15.5-.859375 20.148438-.859375 59.402344 0 39.25.152344 43.898438.859375 59.402344.652344 14.332031 3.046875 22.113281 5.058594 27.292969 2.359375 6.386719 6.113281 12.160156 10.996094 16.902343 4.742187 4.882813 10.515624 8.640626 16.902343 10.996094 5.179688 2.015625 12.964844 4.410156 27.296875 5.0625 15.5.707032 20.144532.855469 59.398438.855469 39.257812 0 43.90625-.148437 59.402344-.855469 14.332031-.652344 22.117187-3.046875 27.296874-5.0625 12.820313-4.945312 22.953126-15.078125 27.898438-27.898437 2.011719-5.179688 4.40625-12.960938 5.0625-27.292969.707031-15.503906.855469-20.152344.855469-59.402344 0-39.253906-.148438-43.902344-.855469-59.402344-.652344-14.332031-3.046875-22.117187-5.0625-27.296874zm-114.59375 162.179687c-41.691406 0-75.488281-33.792969-75.488281-75.484375s33.796875-75.484375 75.488281-75.484375c41.6875 0 75.484375 33.792969 75.484375 75.484375s-33.796875 75.484375-75.484375 75.484375zm78.46875-136.3125c-9.742188 0-17.640625-7.898437-17.640625-17.640625s7.898437-17.640625 17.640625-17.640625 17.640625 7.898437 17.640625 17.640625c-.003906 9.742188-7.898437 17.640625-17.640625 17.640625zm0 0" /><path d="m305 256c0 27.0625-21.9375 49-49 49s-49-21.9375-49-49 21.9375-49 49-49 49 21.9375 49 49zm0 0" /><path d="m475.074219 0h-438.148438c-20.394531 0-36.925781 16.53125-36.925781 36.925781v438.148438c0 20.394531 16.53125 36.925781 36.925781 36.925781h438.148438c20.394531 0 36.925781-16.53125 36.925781-36.925781v-438.148438c0-20.394531-16.53125-36.925781-36.925781-36.925781zm-72.960938 316.605469c-.710937 15.648437-3.199219 26.332031-6.832031 35.683593-7.636719 19.746094-23.246094 35.355469-42.992188 42.992188-9.347656 3.632812-20.035156 6.117188-35.679687 6.832031-15.675781.714844-20.683594.886719-60.605469.886719-39.925781 0-44.929687-.171875-60.609375-.886719-15.644531-.714843-26.332031-3.199219-35.679687-6.832031-9.8125-3.691406-18.695313-9.476562-26.039063-16.957031-7.476562-7.339844-13.261719-16.226563-16.953125-26.035157-3.632812-9.347656-6.121094-20.035156-6.832031-35.679687-.722656-15.679687-.890625-20.6875-.890625-60.609375s.167969-44.929688.886719-60.605469c.710937-15.648437 3.195312-26.332031 6.828125-35.683593 3.691406-9.808594 9.480468-18.695313 16.960937-26.035157 7.339844-7.480469 16.226563-13.265625 26.035157-16.957031 9.351562-3.632812 20.035156-6.117188 35.683593-6.832031 15.675781-.714844 20.683594-.886719 60.605469-.886719s44.929688.171875 60.605469.890625c15.648437.710937 26.332031 3.195313 35.683593 6.824219 9.808594 3.691406 18.695313 9.480468 26.039063 16.960937 7.476563 7.34375 13.265625 16.226563 16.953125 26.035157 3.636719 9.351562 6.121094 20.035156 6.835938 35.683593.714843 15.675781.882812 20.683594.882812 60.605469s-.167969 44.929688-.886719 60.605469zm0 0" /></svg>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@ViewBag.Settings.Linkedin" target="_blank">
+                                                        <svg width="32" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m475.074219 0h-438.148438c-20.394531 0-36.925781 16.53125-36.925781 36.925781v438.148438c0 20.394531 16.53125 36.925781 36.925781 36.925781h438.148438c20.394531 0 36.925781-16.53125 36.925781-36.925781v-438.148438c0-20.394531-16.53125-36.925781-36.925781-36.925781zm-293.464844 387h-62.347656v-187.574219h62.347656zm-31.171875-213.1875h-.40625c-20.921875 0-34.453125-14.402344-34.453125-32.402344 0-18.40625 13.945313-32.410156 35.273437-32.410156 21.328126 0 34.453126 14.003906 34.859376 32.410156 0 18-13.53125 32.402344-35.273438 32.402344zm255.984375 213.1875h-62.339844v-100.347656c0-25.21875-9.027343-42.417969-31.585937-42.417969-17.222656 0-27.480469 11.601563-31.988282 22.800781-1.648437 4.007813-2.050781 9.609375-2.050781 15.214844v104.75h-62.34375s.816407-169.976562 0-187.574219h62.34375v26.558594c8.285157-12.78125 23.109375-30.960937 56.1875-30.960937 41.019531 0 71.777344 26.808593 71.777344 84.421874zm0 0" /></svg>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@ViewBag.Settings.Youtube" target="_blank">
+                                                        <svg width="32" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m224.113281 303.960938 83.273438-47.960938-83.273438-47.960938zm0 0" /><path d="m475.074219 0h-438.148438c-20.394531 0-36.925781 16.53125-36.925781 36.925781v438.148438c0 20.394531 16.53125 36.925781 36.925781 36.925781h438.148438c20.394531 0 36.925781-16.53125 36.925781-36.925781v-438.148438c0-20.394531-16.53125-36.925781-36.925781-36.925781zm-59.113281 256.261719s0 51.917969-6.585938 76.953125c-3.691406 13.703125-14.496094 24.507812-28.199219 28.195312-25.035156 6.589844-125.175781 6.589844-125.175781 6.589844s-99.878906 0-125.175781-6.851562c-13.703125-3.6875-24.507813-14.496094-28.199219-28.199219-6.589844-24.769531-6.589844-76.949219-6.589844-76.949219s0-51.914062 6.589844-76.949219c3.6875-13.703125 14.757812-24.773437 28.199219-28.460937 25.035156-6.589844 125.175781-6.589844 125.175781-6.589844s100.140625 0 125.175781 6.851562c13.703125 3.6875 24.507813 14.496094 28.199219 28.199219 6.851562 25.035157 6.585938 77.210938 6.585938 77.210938zm0 0" /></svg>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mt-5 mt-lg-0">
+                                    <div class="ft-search">
+                                        <div class="head"><h3>İçerik Arama</h3></div>
+                                        <div class="content">
+                                            <form asp-action="Search" method="post">
+                                                <input type="text" id="searchText" name="searchText" class="form-control" required placeholder="Ara" />
+                                                <button type="submit">
+                                                    <svg width="24px" height="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve"><g><g><path d="M310,190c-5.52,0-10,4.48-10,10s4.48,10,10,10c5.52,0,10-4.48,10-10S315.52,190,310,190z" /></g></g><g><g><path d="M500.281,443.719l-133.48-133.48C388.546,277.485,400,239.555,400,200C400,89.72,310.28,0,200,0S0,89.72,0,200s89.72,200,200,200c39.556,0,77.486-11.455,110.239-33.198l36.895,36.895c0.005,0.005,0.01,0.01,0.016,0.016l96.568,96.568C451.276,507.838,461.319,512,472,512c10.681,0,20.724-4.162,28.278-11.716C507.837,492.731,512,482.687,512,472S507.837,451.269,500.281,443.719z M305.536,345.727c0,0.001-0.001,0.001-0.002,0.002C274.667,368.149,238.175,380,200,380c-99.252,0-180-80.748-180-180S100.748,20,200,20s180,80.748,180,180c0,38.175-11.851,74.667-34.272,105.535C334.511,320.988,320.989,334.511,305.536,345.727z M326.516,354.793c10.35-8.467,19.811-17.928,28.277-28.277l28.371,28.371c-8.628,10.183-18.094,19.65-28.277,28.277L326.516,354.793z M486.139,486.139c-3.78,3.78-8.801,5.861-14.139,5.861s-10.359-2.081-14.139-5.861l-88.795-88.795c10.127-8.691,19.587-18.15,28.277-28.277l88.798,88.798C489.919,461.639,492,466.658,492,472C492,477.342,489.919,482.361,486.139,486.139z" /></g></g><g><g><path d="M200,40c-88.225,0-160,71.775-160,160s71.775,160,160,160s160-71.775,160-160S288.225,40,200,40z M200,340c-77.196,0-140-62.804-140-140S122.804,60,200,60s140,62.804,140,140S277.196,340,200,340z" /></g></g><g><g><path d="M312.065,157.073c-8.611-22.412-23.604-41.574-43.36-55.413C248.479,87.49,224.721,80,200,80c-5.522,0-10,4.478-10,10c0,5.522,4.478,10,10,10c41.099,0,78.631,25.818,93.396,64.247c1.528,3.976,5.317,6.416,9.337,6.416c1.192,0,2.405-0.215,3.584-0.668C311.472,168.014,314.046,162.229,312.065,157.073z" /></g></g></svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="ft-subscription">
+                                        <div class="head"><h3>E-Posta Kaydı</h3></div>
+                                        <div class="content">
+                                            <div class="form-group">
+                                                <input type="email" class="form-control email" placeholder="E-Posta Adresiniz" required>
+                                            </div>
+                                            <p>E-Posta kaydınızı yaparak, en son çıkan makelelerden haberdar olun. <a asp-action="EmailCancellation" target="_blank">İstediğiniz zaman e-posta listemizden çıkabilirsiniz.</a></p>
+                                            <button type="button" onclick="ftpostEmailRegistration(this)" class="btn btn-block btn-sm">Kaydı Oluştur</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mt-5 mt-lg-0">
+                                    <div class="ft-thanks">
+                                        <div class="head"><h3>Teşekkürler</h3></div>
+                                        <div class="content">   
+                                            <ul>
+                                                <li>
+                                                    Icons made by <a target="_blank" href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a target="_blank" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+                                                </li>
+                                                <li>
+                                                    Icons made by <a target="_blank" href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a target="_blank" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+                                                </li>
+                                                <li>
+                                                    Icons made by <a target="_blank" href="https://www.flaticon.com/authors/google" title="Google">Google</a> from <a target="_blank" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+                                                </li>
+                                                <li>
+                                                    Text editors made from <a target="_blank" href="https://ckeditor.com/ckeditor-4/">www.ckeditor.com</a>
+                                                </li>
+                                                <li>
+                                                    Code snippet made from <a target="_blank" href="https://highlightjs.org/">www.highlightjs.org</a>
+                                                </li>
+                                                <li>
+                                                    Illustrations made by <a target="_blank" href="https://twitter.com/ninaLimpi">Katerina Limpitsouni</a> from <a href="https://undraw.co/" target="_blank">www.undraw.co</a>
+                                                </li>
+                                                <li>
+                                                    Data tables made from <a href="https://datatables.net/" target="_blank">www.datatables.net</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="ft-copyright">
+                                       Tüm Hakları Saklıdır <br /> Copyright © 2020
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        sideMenuToggleResize();
+        $(".navbar-b .mobileMenuToggle").click(function (e) {
+            var menuDisplay = $(".navbar-b .mobileMenu").css("display");
+            if (menuDisplay == "none") {
+                $(".navbar-b .mobileMenu").fadeIn();
+                $(".navbar-b .mobileMenuToggle a").css({"fill": "rgb(190, 150, 86)","opacity": "0.5"});
+            }
+            else {
+                $(".navbar-b .mobileMenu").fadeOut();
+                $(".navbar-b .mobileMenuToggle a").css({"fill": "rgb(0, 0, 0)","opacity": "0.125"});
+            }
+        });
+        $(".mainSideToggle").click(function (e) {
+            var sideDisplay = $("#side-content").css("display");
+            if (sideDisplay == "none") {
+                var footerDisplay = $("#footer-content").css("display");
+                if (footerDisplay != "none") {
+                    $("#footer-content").fadeOut();
+                    $(".mainFooterToggle").css({"fill": "rgb(0, 0, 0)","opacity": "0.125"});
+                }
+
+                $("#side-content").fadeIn();
+                $(".mainSideToggle").css({"fill": "rgb(190, 150, 86)","opacity": "0.5"});
+            }
+            else {
+                $("#side-content").fadeOut();
+                $(".mainSideToggle").css({"fill": "rgb(0, 0, 0)","opacity": "0.125"});
+            }
+        });
+
+        $(".mainFooterToggle").click(function (e) {
+            var footerDisplay = $("#footer-content").css("display");
+            if (footerDisplay == "none") {
+                var sideDisplay = $("#side-content").css("display");
+                if (sideDisplay != "none") {
+                    $("#side-content").fadeOut();
+                    $(".mainSideToggle").css({"fill": "rgb(0, 0, 0)","opacity": "0.125"});
+                }
+
+                $("#footer-content").fadeIn();
+                $(".mainFooterToggle").css({"fill": "rgb(190, 150, 86)","opacity": "0.5"});
+            }
+            else {
+                $("#footer-content").fadeOut();
+                $(".mainFooterToggle").css({"fill": "rgb(0, 0, 0)","opacity": "0.125"});
+            }
+        });
+    });
+
+    $(window).resize(function() {
+        sideMenuToggleResize();
+    });
+
+    function sideMenuToggleResize() {
+        var contentContainer = $("#content .container");
+        var sideToggleWidth = parseInt($(".mainSideToggle").css("width")); 
+        var containerRightValue = (parseInt(contentContainer.css("margin-left")) + parseInt(contentContainer.css("padding-left")));
+        var marginRight = (containerRightValue / 2 - sideToggleWidth / 2);
+
+        if (marginRight < 40) {
+            $(".mainSideToggle").css({ "top":"unset", "right":"20px", "bottom":"12px", "margin-right":"0px", "transform":"unset"});
+        }
+        else {
+            $(".mainSideToggle").css({ "top":"50%", "right":"0", "bottom":"unset", "margin-right": marginRight + "px", "transform": "translateY(-12px)"});
+        }
+    }
+</script>
+

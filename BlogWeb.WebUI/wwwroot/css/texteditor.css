@@ -1,0 +1,20 @@
+﻿
+.textType1 {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 30px;
+    text-align:justify;
+}
+
+.imageCenterOptions {
+    margin-bottom: 30px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.imageOptions1 {
+    max-width: 100%;
+    width: 500px;
+}

@@ -1,0 +1,305 @@
+﻿@model Setting
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<div class="settings">
+    <div class="wayLine">
+        <a asp-controller="General" asp-action="Index" style="text-decoration: none;">
+            <svg width="16" height="16" style="fill:#C64444;" viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg"><path d="m240 0c-132.546875 0-240 107.453125-240 240s107.453125 240 240 240 240-107.453125 240-240c-.148438-132.484375-107.515625-239.851562-240-240zm207.566406 324.078125-68.253906 11.777344c7.8125-28.652344 12.03125-58.164063 12.558594-87.855469h71.929687c-.902343 26.117188-6.398437 51.871094-16.234375 76.078125zm-431.367187-76.078125h71.929687c.527344 29.691406 4.746094 59.203125 12.558594 87.855469l-68.253906-11.777344c-9.835938-24.207031-15.332032-49.960937-16.234375-76.078125zm16.234375-92.078125 68.253906-11.777344c-7.8125 28.652344-12.03125 58.164063-12.558594 87.855469h-71.929687c.902343-26.117188 6.398437-51.871094 16.234375-76.078125zm215.566406-27.472656c28.746094.367187 57.421875 2.984375 85.761719 7.832031l28.238281 4.871094c8.675781 29.523437 13.34375 60.078125 13.878906 90.847656h-127.878906zm88.488281-7.9375c-29.238281-4.996094-58.828125-7.695313-88.488281-8.0625v-96c45.863281 4.40625 85.703125 46.398437 108.28125 107.511719zm-104.488281-8.0625c-29.660156.367187-59.242188 3.066406-88.480469 8.0625l-19.800781 3.425781c22.578125-61.128906 62.417969-103.136719 108.28125-107.523438zm-85.753906 23.832031c28.335937-4.847656 57.007812-7.464844 85.753906-7.832031v103.550781h-127.878906c.535156-30.769531 5.203125-61.324219 13.878906-90.847656zm-42.125 111.71875h127.878906v103.550781c-28.746094-.367187-57.421875-2.984375-85.761719-7.832031l-28.238281-4.871094c-8.675781-29.523437-13.34375-60.078125-13.878906-90.847656zm39.390625 111.488281c29.238281 5.003907 58.824219 7.714844 88.488281 8.105469v96c-45.863281-4.410156-85.703125-46.402344-108.28125-107.515625zm104.488281 8.105469c29.660156-.390625 59.242188-3.101562 88.480469-8.105469l19.800781-3.425781c-22.578125 61.128906-62.417969 103.136719-108.28125 107.523438zm85.753906-23.875c-28.335937 4.847656-57.007812 7.464844-85.753906 7.832031v-103.550781h127.878906c-.535156 30.769531-5.203125 61.324219-13.878906 90.847656zm58.117188-111.71875c-.527344-29.691406-4.746094-59.203125-12.558594-87.855469l68.253906 11.777344c9.835938 24.207031 15.332032 49.960937 16.234375 76.078125zm47.601562-93.710938-65.425781-11.289062c-11.761719-38.371094-33.765625-72.808594-63.648437-99.601562 55.878906 18.648437 102.21875 58.457031 129.074218 110.890624zm-269.871094-110.890624c-29.882812 26.792968-51.886718 61.230468-63.648437 99.601562l-65.425781 11.289062c26.855468-52.433593 73.195312-92.242187 129.074218-110.890624zm-129.074218 314.3125 65.425781 11.289062c11.761719 38.371094 33.765625 72.808594 63.648437 99.601562-55.878906-18.648437-102.21875-58.457031-129.074218-110.890624zm269.871094 110.890624c29.882812-26.792968 51.886718-61.230468 63.648437-99.601562l65.425781-11.289062c-26.855468 52.433593-73.195312 92.242187-129.074218 110.890624zm0 0" /></svg>
+        </a>
+        <span>></span>
+        <a asp-action="Index" class="wayBefore">Ayarlar</a>
+    </div>
+
+    @if (ViewBag.SettingUpdateSuccess != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.SettingUpdateSuccess
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (ViewBag.SettingUpdateError != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.SettingUpdateError
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab" aria-controls="general" aria-selected="true">GENEL</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="email-tab" data-toggle="tab" href="#email" role="tab" aria-controls="email" aria-selected="false">E-POSTA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="social-tab" data-toggle="tab" href="#social" role="tab" aria-controls="social" aria-selected="false">SOSYAL MEDYA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="about-tab" data-toggle="tab" href="#about" role="tab" aria-controls="about" aria-selected="false">HAKKINDA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">İLETİŞİM</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="frequentlyAsked-tab" data-toggle="tab" href="#frequentlyAsked" role="tab" aria-controls="frequentlyAsked" aria-selected="false">SIKÇA SORULANLAR</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="privacyPolicy-tab" data-toggle="tab" href="#privacyPolicy" role="tab" aria-controls="privacyPolicy" aria-selected="false">GİZLİLİK POLİTİKASI</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="other-tab" data-toggle="tab" href="#other" role="tab" aria-controls="other" aria-selected="false">DİĞER</a>
+                    </li>
+                </ul>
+                <form asp-action="UpdateSetting" method="post">
+                    <div class="tab-content" id="myTabContent">
+                        <input type="hidden" asp-for="SettingId" />
+                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                            <div class="form-group row">
+                                <label for="SiteName" class="col-lg-2 col-form-label">SİTE ADI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SiteName" type="text" class="form-control" id="SiteName" placeholder="SİTE ADI">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="SiteTitle" class="col-lg-2 col-form-label">SİTE BAŞLIĞI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SiteTitle" type="text" class="form-control" id="SiteTitle" placeholder="SİTE BAŞLIĞI(max 60 karakter)" maxlength="60">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Description" class="col-lg-2 col-form-label">SİTE AÇIKLAMASI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Description" type="text" class="form-control" id="Description" placeholder="SİTE AÇIKLAMASI(max 160 karakter)" maxlength="160">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Email" class="col-lg-2 col-form-label">E-POSTA ADRESİ</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Email" type="text" class="form-control" id="Email" placeholder="E-POSTA ADRESİ">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Phone" class="col-lg-2 col-form-label">TELEFON NUMARASI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Phone" type="text" class="form-control" id="Phone" placeholder="TELEFON NUMARASI">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Address" class="col-lg-2 col-form-label">ADRES</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Address" type="text" class="form-control" id="Address" placeholder="ADRES">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="City" class="col-lg-2 col-form-label">ŞEHİR</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="City" type="text" class="form-control" id="City" placeholder="ŞEHİR">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
+                            <div class="form-group row">
+                                <label for="SMTPServerHost" class="col-lg-2 col-form-label">SMTP SUNUCU ADRESİ</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SMTPServerHost" type="text" class="form-control" id="SMTPServerHost" placeholder="SMTP SUNUCU ADRESİ">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="SMTPServerUsername" class="col-lg-2 col-form-label">SMTP KULLANICI ADI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SMTPServerUsername" type="text" class="form-control" id="SMTPServerUsername" placeholder="SMTP KULLANICI ADI">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="SMTPServerPassword" class="col-lg-2 col-form-label">SMTP ŞİFRE</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SMTPServerPassword" type="password" value="@Model.SMTPServerPassword" class="form-control" id="SMTPServerPassword" placeholder="SMTP ŞİFRE">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="SMTPServerPort" class="col-lg-2 col-form-label">SMTP PORT</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SMTPServerPort" type="text" class="form-control" id="SMTPServerPort" placeholder="SMTP PORT">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="SMTPServerFrom" class="col-lg-2 col-form-label">SMTP GÖNDERİCİ E-POSTA</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SMTPServerFrom" type="text" class="form-control" id="SMTPServerFrom" placeholder="SMTP GÖNDERİCİ E-POSTA">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="SMTPServerFromName" class="col-lg-2 col-form-label">SMTP GÖNDERİCİ ADI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="SMTPServerFromName" type="text" class="form-control" id="SMTPServerFromName" placeholder="SMTP GÖNDERİCİ ADI">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="social" role="tabpanel" aria-labelledby="social-tab">
+                            <div class="form-group row">
+                                <label for="Facebook" class="col-lg-2 col-form-label">FACEBOOK URL</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Facebook" type="text" class="form-control" id="Facebook" placeholder="FACEBOOK URL">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Instagram" class="col-lg-2 col-form-label">INSTAGRAM URL</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Instagram" type="text" class="form-control" id="Instagram" placeholder="INSTAGRAM URL">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Twitter" class="col-lg-2 col-form-label">TWITTER URL</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Twitter" type="text" class="form-control" id="Twitter" placeholder="TWITTER URL">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Linkedin" class="col-lg-2 col-form-label">LINKEDIN URL</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Linkedin" type="text" class="form-control" id="Linkedin" placeholder="LINKEDIN URL">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="Youtube" class="col-lg-2 col-form-label">YOUTUBE URL</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="Youtube" type="text" class="form-control" id="Youtube" placeholder="YOUTUBE URL">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+                            <textarea asp-for="AboutPage"></textarea>
+                            <script>
+                                CKEDITOR.replace('AboutPage');
+                            </script>
+                        </div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <textarea asp-for="ContactPage"></textarea>
+                            <script>
+                                CKEDITOR.replace('ContactPage');
+                            </script>
+                        </div>
+                        <div class="tab-pane fade" id="frequentlyAsked" role="tabpanel" aria-labelledby="frequentlyAsked-tab">
+                            <textarea asp-for="FrequentlyAskedPage"></textarea>
+                            <script>
+                                CKEDITOR.replace('FrequentlyAskedPage');
+                            </script>
+                        </div>
+                        <div class="tab-pane fade" id="privacyPolicy" role="tabpanel" aria-labelledby="privacyPolicy-tab">
+                            <textarea asp-for="PrivacyPolicyPage"></textarea>
+                            <script>
+                                CKEDITOR.replace('PrivacyPolicyPage');
+                            </script>
+                        </div>
+                        <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
+                            <div class="form-group row">
+                                <label for="FacebookSharing" class="col-lg-2 col-form-label">FACEBOOK PAYLAŞMA BAĞLANTISI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="FacebookSharing" type="text" class="form-control" id="FacebookSharing" placeholder="FACEBOOK PAYLAŞMA BAĞLANTISI">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="TwitterSharing" class="col-lg-2 col-form-label">TWITTER PAYLAŞMA BAĞLANTISI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="TwitterSharing" type="text" class="form-control" id="TwitterSharing" placeholder="TWITTER PAYLAŞMA BAĞLANTISI">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="LinkedInSharing" class="col-lg-2 col-form-label">LINKEDIN PAYLAŞMA BAĞLANTISI</label>
+                                <div class="col-lg-10">
+                                    <input asp-for="LinkedInSharing" type="text" class="form-control" id="LinkedInSharing" placeholder="TWITTER PAYLAŞMA BAĞLANTISI">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeBlogCount">Anasayfada gösterilecek olan blog sayısıdır. Paylaşım akışının devam etmesi için minimum 6 olarak ayarlanmalıdır!</label>
+                                <select asp-for="TakeBlogCount" class="form-control" id="SelectTakeBlogCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 24; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeCommentCount">Detay sayfasında gösterilecek olan ana yorum sayısıdır.</label>
+                                <select asp-for="TakeCommentCount" class="form-control" id="SelectTakeCommentCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeAnswerCount">Detay sayfasında gösterilecek olan ana yorum altındaki cevap sayısıdır.</label>
+                                <select asp-for="TakeAnswerCount" class="form-control" id="SelectTakeAnswerCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeSideMostReadCount">"Side" panelinde en çok okunan blogların gösterileceği sayıdır.</label>
+                                <select asp-for="TakeSideMostReadCount" class="form-control" id="SelectTakeSideMostReadCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeSideMostCommentCount">"Side" panelinde en çok yorum alan blogların gösterileceği sayıdır.</label>
+                                <select asp-for="TakeSideMostCommentCount" class="form-control" id="SelectTakeSideMostCommentCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeSideLastPublishedCount">"Side" panelinde en son yayınlanan blogların gösterileceği sayıdır.</label>
+                                <select asp-for="TakeSideLastPublishedCount" class="form-control" id="SelectTakeSideLastPublishedCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SelectTakeSideRandomBlogCount">"Side" panelinde rastgele blogların gösterileceği sayıdır.</label>
+                                <select asp-for="TakeSideRandomBlogCount" class="form-control" id="SelectTakeSideRandomBlogCount" required>
+                                    <option value="">Seç</option>
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <option value="@(i+1)">@(i + 1)</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-primary btn-block mt-2" value="AYARLARI GÜNCELLE"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,374 @@
+﻿@model Blog
+
+@{
+    ViewData["Title"] = ViewBag.Title;
+    ViewData["Description"] = ViewBag.Description;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="detail-content">
+    <div class="row">
+        <div class="col-lg-8">
+            <input class="BlogId" type="hidden" value="@Model.BlogId" />
+            <div class="blog_head"><h3>@Model.Title</h3></div>
+            <div class="blog_text">@Html.Raw(Model.Text)</div>
+            <div class="social-media">
+                <p>Makaleyi Paylaş: </p>
+                <a href="@ViewBag.FacebookSharing/Home/Detail/@Model.BlogId" target="_blank">
+                    <img src="~/assets/facebook.png" alt="Facebook" />
+                </a>
+                <a href="@ViewBag.TwitterSharing/Home/Detail/@Model.BlogId" target="_blank">
+                    <img src="~/assets/twitter.png" alt="Twitter" />
+                </a>
+                <a href="@ViewBag.LinkedinSharing/Home/Detail/@Model.BlogId" target="_blank">
+                    <img src="~/assets/linkedin.png" alt="LinkedIn" />
+                </a>
+            </div>
+            <div class="blog_head mt-3"><h3>Ziyaretçi Yorumları</h3></div>
+            <div class="blog_comments">
+                @if (ViewBag.CommentAny == true)
+                {
+                    @if (ViewBag.CommentParentCount > 0)
+                    {
+                        <div class="beforeComments">
+                            <a id="getBeforeComments">Önceki yorumları gör (@ViewBag.CommentParentCount)</a>
+                        </div>
+                    }
+
+                    @foreach (var item in ViewBag.CommentParents)
+                    {
+                        <div class="comment">
+                            <input class="CommentId" type="hidden" value="@item.CommentId" />
+                            <input class="toNameComment" type="hidden" value="@System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(item.Fullname.ToLower())" />
+                            <input class="openAnswerSomeone" type="hidden" value="0" />
+                            <div class="com_name"><h3>@System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(item.Fullname.ToLower())</h3></div>
+                            <div class="com_comment">
+                                <p>@item.Text</p>
+                            </div>
+                            <div class="com_other"><a>Yanıtla</a><span>@item.CreateTime.ToString("dd/MM/yyyy HH:mm") </span></div>
+
+                            @if (ViewBag.CommentAnswers != null)
+                            {
+                                @if (ViewBag.CommentAnswerCount != null)
+                                {
+                                    @foreach (var c in ViewBag.CommentAnswerCount)
+                                    {
+                                        @if (item.CommentId == c.ParentId && c.AnswerCount > 0)
+                                        {
+                                            <div class="beforeAnswers">
+                                                <a class="getBeforeAnswer">Önceki yanıtları gör (@c.AnswerCount)</a>
+                                            </div>
+                                        }
+                                    }
+                                }
+
+                                @foreach (var answer in ViewBag.CommentAnswers)
+                                {
+                                    @if (item.CommentId == answer.ParentId)
+                                    {
+                                        <div class="comment_answer">
+                                            <input class="openAnswerSomeone" type="hidden" value="0" />
+                                            <input class="toName" type="hidden" value="@System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(answer.Fullname.ToLower())" />
+                                            <div class="com_name">
+                                                <h3>
+                                                    @if (answer.Type == "admin")
+                                                    {
+                                                        <span>
+                                                            <img src="~/assets/crown.png" width="14" height="14" title="Yönetici" />
+                                                        </span>
+                                                    }
+                                                    @System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(answer.Fullname.ToLower())
+                                                </h3>
+                                            </div>
+                                            <div class="com_comment">
+                                                @if (answer.AnswerToName != null)
+                                                {
+                                                    <p><span class="answerToName">@answer.AnswerToName </span>@answer.Text</p>
+                                                }
+                                                else
+                                                {
+                                                    <p>@answer.Text</p>
+                                                }
+                                            </div>
+                                            <div class="com_other"><a>Yanıtla</a><span>@answer.CreateTime.ToString("dd/MM/yyyy HH:mm") </span></div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="noComment mb-3">
+                        <p>Henüz hiç yorum yapılmamış. İlk yorumu yapan sen ol!</p>
+                    </div>
+                }
+            </div>
+            <div class="blog_comment_post">
+                <form>
+                    <div class="form-group">
+                        <label for="commentArea">Yorumunuzu İletiniz</label>
+                        <textarea class="form-control commentArea" id="commentArea" rows="3" placeholder="Yorum Yap"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="fullName">İsminiz</label>
+                            <input type="text" class="form-control fullName" id="fullName" placeholder="İsminizi Giriniz">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="email">Email Adresiniz</label>
+                            <input type="email" class="form-control email" id="email" placeholder="Email Adresiniz">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6 col-sm-5 col-md-4">
+                            <div class="captchaArea">
+                                <img class="captcha" src="~/captcha-image-loading" />
+                                <div class="captchaRefresh" onclick="captchaRefresh()">
+                                    <img src="~/assets/refresh.png" width="24" height="24" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-6 col-sm-7 col-md-8">
+                            <input id="CaptchaCode" name="CaptchaCode" type="text" class="captchaUserInput form-control" placeholder="Doğrulama Kodu" maxlength="5" />
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-block btn-sm">Yorumu Gönder</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="sideList">
+                <div class="head">
+                    <ul class="nav nav-tabs" id="myTab-detail" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="mostRead-tab-detail" data-toggle="tab" href="#mostRead-detail" role="tab" aria-controls="mostRead-detail" aria-selected="true">En Çok Okunan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="mostComment-tab-detail" data-toggle="tab" href="#mostComment-detail" role="tab" aria-controls="mostComment-detail" aria-selected="false">En Çok Yorum Alan</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="myTabContent-detail">
+                    <div class="tab-pane fade show active" id="mostRead-detail" role="tabpanel" aria-labelledby="mostRead-tab-detail">
+                        @foreach (var item in ViewBag.MostReadBlogs)
+                        {
+                            <div class="hits">
+                                <span>
+                                    <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                    <img src="~/assets/category.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.VisitorHit
+                                    <img src="~/assets/eye.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.CommentCount
+                                    <img src="~/assets/comment.png" width="16" height="16" />
+                                </span>
+                            </div>
+                            <div class="item">
+                                <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                <div class="text">
+                                    @{
+                                        var date = item.PublishedDate;
+                                    }
+                                    <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                    @{
+                                        string blogName = item.Title;
+                                        if (blogName.Length > 70)
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="mostComment-detail" role="tabpanel" aria-labelledby="mostComment-tab-detail">
+                        @foreach (var item in ViewBag.MostCommentBlogs)
+                        {
+                            <div class="hits">
+                                <span>
+                                    <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                    <img src="~/assets/category.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.VisitorHit
+                                    <img src="~/assets/eye.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.CommentCount
+                                    <img src="~/assets/comment.png" width="16" height="16" />
+                                </span>
+                            </div>
+                            <div class="item">
+                                <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                <div class="text">
+                                    @{
+                                        var date = item.PublishedDate;
+                                    }
+                                    <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                    @{
+                                        string blogName = item.Title;
+                                        if (blogName.Length > 70)
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="sideList mt-5">
+                <div class="head">
+                    <ul class="nav nav-tabs" id="myTab-detail" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="lastPublished-tab-detail" data-toggle="tab" href="#lastPublished-detail" role="tab" aria-controls="lastPublished-detail" aria-selected="true">En Son Yayınlanan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="randomBlogs-tab-detail" data-toggle="tab" href="#randomBlogs-detail" role="tab" aria-controls="randomBlogs-detail" aria-selected="false">Editörün Önerisi</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="myTabContent-detail">
+                    <div class="tab-pane fade show active" id="lastPublished-detail" role="tabpanel" aria-labelledby="lastPublished-tab-detail">
+                        @foreach (var item in ViewBag.LastPublishedBlogs)
+                        {
+                            <div class="hits">
+                                <span>
+                                    <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                    <img src="~/assets/category.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.VisitorHit
+                                    <img src="~/assets/eye.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.CommentCount
+                                    <img src="~/assets/comment.png" width="16" height="16" />
+                                </span>
+                            </div>
+                            <div class="item">
+                                <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                <div class="text">
+                                    @{
+                                        var date = item.PublishedDate;
+                                    }
+                                    <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                    @{
+                                        string blogName = item.Title;
+                                        if (blogName.Length > 70)
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="randomBlogs-detail" role="tabpanel" aria-labelledby="randomBlogs-tab-detail">
+                        @foreach (var item in ViewBag.RandomBlogs)
+                        {
+                            <div class="hits">
+                                <span>
+                                    <a asp-action="GetBlogsByCategory" asp-route-id="@item.CategoryId">@item.CategoryName</a>
+                                    <img src="~/assets/category.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.VisitorHit
+                                    <img src="~/assets/eye.png" width="16" height="16" />
+                                </span>
+                                <span>
+                                    @item.CommentCount
+                                    <img src="~/assets/comment.png" width="16" height="16" />
+                                </span>
+                            </div>
+                            <div class="item">
+                                <div class="image"><a asp-action="Detail" asp-route-id="@item.BlogId"><img src="~/img/@item.ImageUrl" /></a></div>
+                                <div class="text">
+                                    @{
+                                        var date = item.PublishedDate;
+                                    }
+                                    <p>@date.ToString("MMM") @date.Day, @date.Year</p>
+
+                                    @{
+                                        string blogName = item.Title;
+                                        if (blogName.Length > 70)
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName.Substring(0, 70) ...</h3></a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Detail" asp-route-id="@item.BlogId"><h3>@blogName</h3></a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="sideEmail mt-5">
+                <div class="head">
+                    <h3>E-Posta Kaydı</h3>
+                </div>
+                <div class="inputMail">
+                    <div class="form-group">
+                        <input type="email" class="form-control email" placeholder="E-Posta Adresiniz" required>
+                    </div>
+                    <p>E-Posta kaydınızı yaparak, en son çıkan makelelerden haberdar olun. <a asp-action="EmailCancellation" target="_blank">İstediğiniz zaman e-posta listemizden çıkabilirsiniz.</a></p>
+                    <button type="button" onclick="postEmailRegistration(this)" class="btn btn-block btn-sm">Kaydı Oluştur</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="~/js/blogDetail.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    getMoreComment();
+    getMoreAnswer();
+    getAnswerSomeone();
+    postComment(); 
+    moreLessControl();
+
+    function captchaRefresh() {
+        var d = new Date();
+        $(".captcha").attr("src", "/captcha-image-loading?" + d.getTime());
+    }
+
+
+
+</script>
+}
+
+
+

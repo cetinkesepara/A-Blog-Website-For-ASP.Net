@@ -1,0 +1,17 @@
+﻿@model Setting
+
+@{
+    ViewData["Title"] = "İletişim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="contact-content">
+    <div class="row">
+        <div class="col-12">
+            <div class="title"><h3>İletişim Sayfası</h3></div>
+
+            <div class="contactText">@Html.Raw(Model.ContactPage)</div>
+        </div>
+    </div>
+</div>
+

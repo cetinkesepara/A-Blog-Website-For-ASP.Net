@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/logindash.css",
+    "inputFile": "wwwroot/scss/logindash.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/indexe.css",
+    "inputFile": "wwwroot/scss/indexe.scss"
+  }
+]

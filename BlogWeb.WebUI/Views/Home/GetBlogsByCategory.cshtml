@@ -1,0 +1,85 @@
+﻿@model IEnumerable<BlogShowItems>
+
+@{
+    ViewData["Title"] = ViewBag.Title;
+    ViewData["Description"] = ViewBag.Description;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="main-content">
+    <input id="CategoryId" type="hidden" value="@ViewBag.CategoryId"/>
+    <div class="row loadrow">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="content-card">
+                    <div class="card-image">
+                        <img src="~/img/@item.ImageUrl" alt="@item.ImageUrl">
+                        <div class="blogInfo">
+                            <div class="infoCat">
+                                <div class="list-item">
+                                    @item.CategoryName
+                                </div>
+                                <div class="list-item">
+                                    <img src="~/assets/category.png" width="16" height="16" />
+                                </div>
+                            </div>
+                            <div class="infoHit">
+                                <ul>
+                                    <li>
+                                        <div class="list-item">
+                                            @item.VisitorHit
+                                        </div>
+                                        <div class="list-item">
+                                            <img src="~/assets/eye.png" width="16" height="16" />
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="list-item">
+                                            @item.CommentCount
+                                        </div>
+                                        <div class="list-item">
+                                            <img src="~/assets/comment.png" width="16" height="16" />
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-title">
+                        <a asp-action="Detail" asp-route-id="@item.BlogId" style="text-decoration:none">
+                            <h4>@item.Title.ToUpper()</h4>
+                        </a>
+                    </div>
+                    <div class="card-date">
+                        @{ var date = item.PublishedDate;
+
+                        }
+                        <span class="dt-info"><span>@date.ToString("MMM") @date.Day, @date.Year</span></span>
+                    </div>
+                    <div class="card-description">
+                        <p>
+                            @item.Explanation
+                        </p>
+                    </div>
+                    <div class="card-button">
+                        <a asp-action="Detail" asp-route-id="@item.BlogId">DEVAMINI OKU</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="loadSpinner" style="text-align:center;display:none;"><img src="~/assets/Spinner.gif" width="100" /></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/main.js"></script>
+    <script>
+        var CategoryId = $("#CategoryId").val();
+        getMoreCategoryBlogs(CategoryId);
+    </script>
+}

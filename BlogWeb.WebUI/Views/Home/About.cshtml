@@ -1,0 +1,17 @@
+﻿@model Setting
+
+@{
+    ViewData["Title"] = "Hakkında";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="about-content">
+    <div class="row">
+        <div class="col-12">
+            <div class="title"><h3>Hakkında Sayfası</h3></div>
+
+            <div class="aboutText">@Html.Raw(Model.AboutPage)</div>
+        </div>
+    </div>
+</div>
+
