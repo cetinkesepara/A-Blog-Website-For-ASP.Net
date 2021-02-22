@@ -103,6 +103,12 @@ namespace BlogWeb.WebUI.Controllers
             return RedirectToAction("EditSelect", new { id = entity.BlogId });
         }
 
+        public IActionResult Delete(int id)
+        {
+            blogRepository.DeleteBlog(id);
+            return RedirectToAction("List");
+        }
+
         public IActionResult EditSelect(int id)
         {
             if (TempData["CreateBlogSuccess"] != null) { ViewBag.CreateBlogSuccess = TempData["CreateBlogSuccess"]; }
@@ -323,11 +329,11 @@ namespace BlogWeb.WebUI.Controllers
                     "<div style='background-color:#F7F7F7;padding:5px;'>" +
                         "<div style='background-color:#FFF;padding:5px;'>" +
                             "<h3 style='text-align:center'>" + blog.Title + "</h3>" +
-                            "<p style='text-align:center'><img src='https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80' width='400px'/></p>" +
+                            "<p style='text-align:center'><img src='https://"+setting.SiteName+ "/img/" + blog.ImageUrl +"' width='400px'/></p>" +
                             "<p style='text-align:justify'>" + blog.Explanation + "...</p>" +
-                            "<a href='#' style='text-decoration:none;text-align:center;display:block; background-color:#007bff;color:#fff;padding:10px 15px;border-radius:15px'>Makeleye Git</a>" +
+                            "<a href='https://"+setting.SiteName+"/Home/Detail/"+blog.BlogId+"' style='text-decoration:none;text-align:center;display:block; background-color:#007bff;color:#fff;padding:10px 15px;border-radius:15px'>Makeleye Git</a>" +
                             "<hr/>" +
-                            "<p>E-Posta aboneliğimizden çıkmak için <a href='#'>buraya tıklayarak</a> ilgili adrese gidiniz.</p>" +
+                            "<p>E-Posta aboneliğimizden çıkmak için <a href='https://" + setting.SiteName + "/Home/EmailCancellation'>buraya tıklayarak</a> ilgili adrese gidiniz.</p>" +
                         "</div>" +
                      "</div>";
 
